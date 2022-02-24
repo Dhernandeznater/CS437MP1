@@ -69,5 +69,4 @@ def detect_stop(forward_time: float):
         cur_time = time.time()
 
     cap.release()
-
     return stop_detected
