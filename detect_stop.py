@@ -59,7 +59,6 @@ def detect_stop(forward_time: float):
 
         # Loop through detections, stop if sign is detected
         for detection in detections:
-            print(detection[1][0].label)
             if detection[1][0].label == "stop sign" and not stop_detected:
                 print("Found Stop Sign")
                 fc.stop()
@@ -73,8 +72,3 @@ def detect_stop(forward_time: float):
     cap.release()
 
     return stop_detected
-
-fc.forward(100)
-detect_stop(10)
-print("done run")
-fc.stop()

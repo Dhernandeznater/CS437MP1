@@ -1,43 +1,64 @@
+from chardet import detect
 import picar_4wd as fc
 import time
 import math
 import numpy as np
+from detect_stop import detect_stop
 
 POWER = 100
 ONE_DEGREE = 1.2 / 180
 ONE_CENTIMETER = .6 / 30
+MOVE = False
 
 
 end_point = (-30, 30)
 
 angle = math.degrees(math.atan(end_point[0] / end_point[1]))
 
-
+# Moves the car a given amt of centimeters
 def move_amt(cm):
-    fc.forward(POWER)
-    time.sleep(ONE_CENTIMETER * cm)
+    if MOVE:
+        fc.forward(POWER)
     print("Moving {} cm".format(cm))
+    detect_stop(ONE_CENTIMETER * cm)
     fc.stop()
 
+# Turn the car from a current angle to a new angle.
+# Checks for stops while moving
 def turn(cur_angle, new_angle):
-    angle_dif = new_angle - cur_angle
-    circle_dif = 360 - angle_dif
-    print(circle_dif)
-    if circle_dif < 180:
-        fc.turn_left(POWER)
-        print("Turning {} degrees left".format(circle_dif))
-        time.sleep(abs(ONE_DEGREE * circle_dif))
+    # Calculate 180 behind car angle
+    new_behind = 180 + angle 
+    if new_behind > 360:
+        new_behind -= 360
+    
+    # Angle and direction
+    turn = (0, 'r')
+
+    # Check if above or below x-axis, elinate possibilities
+    if cur_angle < 180:
+        if new_angle > cur_angle and new_angle < new_behind:
+            turn = (new_angle - cur_angle, 'r')
+        elif new_angle < cur_angle:
+            turn = (cur_angle - new_angle, 'l')
+        else:
+            turn = (cur_angle + (360 - new_angle), 'l')
     else:
-        if angle_dif < 0:
-            angle_dif = 360 + angle_dif
+        if new_angle < cur_angle and new_angle > new_behind:
+            turn = (cur_angle - new_angle, 'l')
+        elif new_angle > cur_angle:
+            turn = (new_angle - cur_angle, 'r')
+        else:
+            turn = (new_angle + (360 - cur_angle), 'r')
+
+    print(turn)
+    if turn[1] == 'r' and MOVE:
         fc.turn_right(POWER)
-        print("Turning {} degrees right".format(angle_dif))
-        time.sleep(abs(ONE_DEGREE * angle_dif))
-    
+    elif MOVE:
+        fc.turn_left(POWER)
+
+    detect_stop(ONE_DEGREE * turn[0])
+
     fc.stop()
-    
-    
-    
 
 def move_to_coordinate(end_point):
     angle = math.degrees(math.atan(end_point[0] / end_point[1]))

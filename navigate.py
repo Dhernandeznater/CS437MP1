@@ -7,9 +7,10 @@ import argparse
 import time
 from de_res import de_res
 from move_wrapper import move_amt, turn
+from detect_stop import detect_stop
 
 
-DEBUG = False
+DEBUG = True
 DE_RES_FACTOR = 5
 X_OFFSET = 12
 GOAL = (16, 6)
@@ -249,7 +250,7 @@ def main():
     path = path[::-1]
     move_inputs = []
 
-    counter = 0
+    counter = 1
     cur_angle = 0
     last_point = path[0]
     for point in path[1:]:
