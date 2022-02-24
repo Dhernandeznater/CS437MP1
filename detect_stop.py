@@ -13,7 +13,6 @@ WIDTH = 640
 HEIGHT = 480
 NUM_THREADS = 4
 
-
 # Use Tensorflow to detect a stop sign, if one is found
 # stop car for 5 seconds and continue the movement of the car
 def detect_stop(forward_time: float):
